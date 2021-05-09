@@ -4,8 +4,8 @@ function solution(N, stages) {
     let failcnt=[];
     let succnt=[];
     for (let i=1; i<=N; i++){
-        succnt=stages.filter(stage=>stage>=i); //클리어 하지 못한 사람들
-        failcnt=stages.filter(stage=>stage===i); //클리어 한 사람들+클리어 하지 못한 사람들
+        succnt=stages.filter(stage=>stage>=i); //클리어 한 사람들+클리어 하지 못한 사람들
+        failcnt=stages.filter(stage=>stage===i); //클리어 하지 못한 사람들
         if(succnt.length===0) fArray.push({rate:0, stage:i}); //클리어 한 사람이 없다면 rate을 0으로 설정 
         else fArray.push({rate:failcnt.length/succnt.length, stage:i});
     }
