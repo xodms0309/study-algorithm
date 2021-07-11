@@ -1,7 +1,6 @@
 # study-algorithm
-가능 언어: <b>C, Java, Python</b> <br/>
-현재 <code><b>C++</b></code> 공부중 <br/>
-백준, 이퍼, 종만북 등
+### Study <br>
+- BOJ with <img src="https://img.shields.io/badge/C++-00599C?style=flat-square&logo=c%2B%2B&logoColor=white"/> <br>
+- Programmers with <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/>
 
-### 목표
-* 하루를 마무리 하기 전에 알고리즘 한 문제라도 풀기
+[![solved.ac tier](http://mazassumnida.wtf/api/v2/generate_badge?boj=xodms0309)](https://solved.ac/xodms0309)
