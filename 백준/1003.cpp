@@ -6,7 +6,6 @@ int main(){
         arr[i]=arr[i-1]+arr[i-2];
     int a;
     cin>>a;
- 
     for(int i=0;i<a;i++){
         int num;
         cin>>num;
