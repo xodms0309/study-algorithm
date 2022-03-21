@@ -11,17 +11,10 @@ vector <bool> init(int L, int C) {
 	sort(arr.begin(), arr.end());
 	return arr;
 }
-int main() {
-	int L, C;
-	cin >> L >> C;
-	char vowel[5] = {'a','e','i','o','u' };
-	vector<char> alphabet(C);
-	vector <bool> temp = init(L, C);
+vector<string> createPassword(int L, int C, vector<char> &alphabet) {
 	vector<string> answer;
-
-	for (int i = 0; i < C; i++) {
-		cin >> alphabet[i];
-	}
+	char vowel[5] = { 'a','e','i','o','u' };
+	vector <bool> temp = init(L, C);
 	do {	
 		string password;
 		int vowel_cnt = 0;
@@ -38,6 +31,17 @@ int main() {
 			answer.push_back(password);
 		}
 	} while (next_permutation(temp.begin(), temp.end()));
+	return answer;
+}
+int main() {
+	int L, C;
+	cin >> L >> C;
+	vector<char> alphabet(C);
+	vector<string> answer;
+	for (int i = 0; i < C; i++) {
+		cin >> alphabet[i];
+	}
+	answer = createPassword(L, C, alphabet);
 	sort(answer.begin(), answer.end());
 	for (int i = 0; i < answer.size(); i++) {
 		cout << answer[i]<<"\n";
