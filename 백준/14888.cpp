@@ -1,20 +1,17 @@
-/*
-N°³ÀÇ ¼ö·Î ÀÌ·ç¾îÁø ¼ö¿­ A1, A2, ..., ANÀÌ ÁÖ¾îÁø´Ù. ¶Ç, ¼ö¿Í ¼ö »çÀÌ¿¡ ³¢¿ö³ÖÀ» ¼ö ÀÖ´Â N-1°³ÀÇ ¿¬»êÀÚ°¡ ÁÖ¾îÁø´Ù. ¿¬»êÀÚ´Â µ¡¼À(+), »¬¼À(-), °ö¼À(¡¿), ³ª´°¼À(¡À)À¸·Î¸¸ ÀÌ·ç¾îÁ® ÀÖ´Ù.
-¿ì¸®´Â ¼ö¿Í ¼ö »çÀÌ¿¡ ¿¬»êÀÚ¸¦ ÇÏ³ª¾¿ ³Ö¾î¼­, ¼ö½ÄÀ» ÇÏ³ª ¸¸µé ¼ö ÀÖ´Ù. ÀÌ¶§, ÁÖ¾îÁø ¼öÀÇ ¼ø¼­¸¦ ¹Ù²Ù¸é ¾È µÈ´Ù.
-N°³ÀÇ ¼ö¿Í N-1°³ÀÇ ¿¬»êÀÚ°¡ ÁÖ¾îÁ³À» ¶§, ¸¸µé ¼ö ÀÖ´Â ½ÄÀÇ °á°ú°¡ ÃÖ´ëÀÎ °Í°ú ÃÖ¼ÒÀÎ °ÍÀ» ±¸ÇÏ´Â ÇÁ·Î±×·¥À» ÀÛ¼ºÇÏ½Ã¿À.
-\*/
 #include <iostream>
+#include <vector>
+#include <algorithm>
 using namespace std;
-#define MAX 11
-int n;
-int dfs_max = -1000000000;
-int dfs_min = 1000000000;
-int op[4];
-int A[MAX];
-void dfs(int depth, int result) {
-	if (depth == n) {
-		if (result >= dfs_max) dfs_max = result;
-		if (result <= dfs_min) dfs_min = result;
+const int INF = 1e9;
+int N;
+int max_answer = -1e9;	
+int min_answer = INF;
+vector<int>A;
+vector<int>op(4);
+void backtracking(int depth, int result) {
+	if (depth == N) {
+		max_answer = max(max_answer, result);
+		min_answer = min(min_answer, result);
 		return;
 	}
 	for (int i = 0; i < 4; i++) {
@@ -22,35 +19,32 @@ void dfs(int depth, int result) {
 			op[i]--;
 			switch (i) {
 			case 0:
-				dfs(depth + 1, result+A[depth]);
-				op[i]++;
+				backtracking(depth + 1, result + A[depth]);
 				break;
 			case 1:
-				dfs(depth + 1,result-A[depth]);
-				op[i]++;
+				backtracking(depth + 1, result - A[depth]);
 				break;
 			case 2:
-				dfs(depth + 1, result*A[depth]);
-				op[i]++;
+				backtracking(depth + 1, result * A[depth]);
 				break;
 			case 3:
-				dfs(depth + 1, result/A[depth]);
-				op[i]++;
+				backtracking(depth + 1, result / A[depth]);
 				break;
 			}
+			op[i]++;
 		}
 	}
-	return;
 }
 int main() {
-	scanf_s("%d", &n);
-	for (int i = 0; i < n; i++) {
-		scanf_s("%d", &A[i]);
+	cin >> N;
+	A.assign(N, 0);
+	for (int i = 0; i < N; i++) {
+		cin >> A[i];
 	}
+	//ë”í•˜ê¸°, ë¹¼ê¸°, ê³±í•˜ê¸°, ë‚˜ëˆ„ê¸°
 	for (int i = 0; i < 4; i++) {
-		scanf_s("%d", &op[i]); //¿¬»êÀÚ °³¼ö
+		cin >> op[i];
 	}
-	dfs(1, A[0]);
-	printf("%d\n", dfs_max);
-	printf("%d", dfs_min);
+	backtracking(1, A[0]);
+	cout << max_answer << "\n" << min_answer;
 }
