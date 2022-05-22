@@ -1,73 +1,59 @@
 #include <string>
 #include <vector>
-
+#include <iostream>
 using namespace std;
-
-#define END 11
-
+int maxDiff=-1;
 vector<int> answer;
-int max_score = -1;
-
-int get_score(vector<int> &a, vector<int> &r) {
-    int apeach = 0, ryan = 0;
-    for(int i=0; i<END; ++i) {
-        if(a[i] == 0 && r[i] == 0) continue; // 둘 다 0점이면 패스
-        
-        if(a[i] >= r[i]) apeach += (10-i); // 어피치 >= 라이언이면 어피치가
-        else ryan += (10-i); // 어피치 < 라이언이면 라이언이 점수 획득
+int calcScore(vector<int>&apeach, vector<int>&ryan) {
+    int ryan_score=0;
+    int apeach_score=0;
+    
+    for (int i=0; i<10; i++) {
+        if (apeach[i]==0 && ryan[i]==0) continue;
+        if (ryan[i]>apeach[i]) ryan_score+=(10-i);
+        else apeach_score+=(10-i);
     }
     
-    if(ryan > apeach) return ryan - apeach;
-    else return -1;
+    if (apeach_score>=ryan_score) return -1;
+    else return ryan_score-apeach_score;
 }
 
-bool shoot_lower_score(vector<int> &ryan) {
-    for(int i=END-1; i>=0; --i) { // 0점 과녁부터 비교
-        if(ryan[i] > answer[i]) return true;
-        else if(ryan[i] < answer[i]) return false;
+bool isLower(vector<int>&ryan){
+    for (int i=10; i>=0; i--) {
+        if (ryan[i]<answer[i]) return false;
+        if (ryan[i]>answer[i]) return true;
     }
-    return false;    
+    return false;
 }
 
-void func(vector<int> &apeach, vector<int> &ryan, int chance, int idx) {
-    if(idx == END || chance == 0) {
-        int score = get_score(apeach, ryan);
-        if(score != -1) {
-            /*
-            	낮은 점수를 더 많이 맞힌 경우가 우선 순위가 있기 때문에,
-                화살이 남아있으면 0점에 나머지 화살을 모두 쏨
-            */
-            if(chance > 0) ryan[idx-1] = chance; 
-            
-            if(score == max_score && shoot_lower_score(ryan)) {
-                answer = ryan;
-            }
-            
-            else if(score > max_score) {
-                max_score = score;
-                answer = ryan;
-            }
-            
-            ryan[idx-1] = 0;
-        }        
+void solve(vector<int> &apeach, vector<int> &ryan, int index, int arrows) {
+    if (index==11 || arrows==0){
+        //점수 계산
+        int diff=calcScore(apeach, ryan);
+        if (diff==-1) return;
+        ryan[10]+=arrows;
+        if (diff==maxDiff && isLower(ryan)) {
+            answer=ryan;
+        }
+        else if (diff>maxDiff) {
+            maxDiff=diff;
+            answer=ryan;
+        }
+        ryan[10]-=arrows;
         return;
-    }    
-    
-    if(chance > apeach[idx]) { // 어피치보다 한 발 더 맞추기
-        ryan[idx] = apeach[idx] + 1;
-        func(apeach, ryan, chance-ryan[idx], idx+1);
-        ryan[idx] = 0;
     }
-    
-    func(apeach, ryan, chance, idx+1); // 쏘지 않고 다음 과녁으로
+    //해당 점수를 가져가는 경우
+    if (arrows>apeach[index]) {
+        ryan[index]=apeach[index]+1;
+        solve(apeach, ryan, index+1, arrows-ryan[index]);
+        ryan[index]=0;
+    }
+    //해당 점수를 안가져가는 경우
+    solve(apeach, ryan, index+1, arrows);
 }
-
 vector<int> solution(int n, vector<int> info) {
-    vector<int> ryan(END, 0);
-    
-    func(info, ryan, n, 0);
-    
-    if(max_score == -1) return {-1};
-    
+    vector<int> ryan(11,0);
+    solve(info, ryan, 0, n);
+    if (maxDiff==-1) answer.push_back(-1);
     return answer;
 }
