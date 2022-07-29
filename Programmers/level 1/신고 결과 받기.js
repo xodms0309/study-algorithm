@@ -1,23 +1,27 @@
 function solution(id_list, report, k) {
-    const answer = Array.from({length: id_list.length}, () => 0);
-    const reportObj = id_list.reduce((acc,cur)=> (acc[cur]=[],acc),{});
-    const reportSet=[...new Set(report)]; //중복 제거
-    
-    //신고당한 사람:[신고한 사람]
-    reportSet.map((element)=>{
-        element=element.split(' ');
-        const user=element[0];
-        const reported=element[1];
-        reportObj[reported].push(user);
-    })
-    
-    for (user in reportObj){
-        if (reportObj[user].length>=k) {
-            reportObj[user].forEach((report)=>{
-                const id=id_list.indexOf(report);
-                answer[id]++;
-            })
+    const usersCnt = id_list.length;
+    const answer = new Array(usersCnt).fill(0);
+    const reportArray = Array.from(Array(usersCnt), ()=>new Array())
+
+    for (let i=0; i<report.length; i++) {
+        const user = report[i].split(" ")[0];
+        const reported = report[i].split(" ")[1];
+        
+        //console.log(id_list.indexOf(user));
+        const idx = id_list.indexOf(reported);
+        if (reportArray[idx].findIndex((e)=>e===user)==-1) {
+            reportArray[idx].push(user);
         }
     }
+    
+
+    for (let i=0; i<reportArray.length; i++) {
+        if (reportArray[i].length<k) continue;
+        for (const user of reportArray[i]) {
+            const idx = id_list.indexOf(user);
+            answer[idx]++;
+        }
+    }
+     
     return answer;
 }
