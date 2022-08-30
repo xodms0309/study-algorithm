@@ -2,11 +2,11 @@ function solution(s) {
     let answer = s.length;
     const len = s.length;
     
-    for (let i=1; i<=len-1; i++) {
+    for (let i=1; i<=len/2; i++) {
         let cnt=1;
         let cur=s.slice(0, i);
         let temp="";
-        for (let j=i; j<s.length; j+=i) {
+        for (let j=i; j<len; j+=i) {
             let next=s.slice(j, j+i);
             if (next==cur) cnt++;
             else {
