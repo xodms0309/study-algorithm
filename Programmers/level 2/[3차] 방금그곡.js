@@ -8,24 +8,28 @@ function solution(m, musicinfos) {
             .replace(/(A#)/g, "a");
     }
     m=replace(m);
-    const arr=musicinfos.map((music)=>{
-        const [start, end, title, score]=music.split(',');
-        const hour=end.slice(0,2)-start.slice(0,2);
-        const min=end.slice(3,5)-start.slice(3,5);
-        const playtime=hour*60+min;
-        const newScore=replace(score);
-        let playedMusic=newScore.repeat(playtime/newScore.length);
-        playedMusic+=newScore.slice(0, playtime%newScore.length);
-        return [title, playtime, playedMusic]
+    
+    const temp=[];
+    
+    for (const musicinfo of musicinfos) {
+        const [start, end, title, melody] = musicinfo.split(',');
+        const hour = end.slice(0, 2)-start.slice(0, 2);
+        const min = end.slice(3, 5) - start.slice(3, 5);
+        
+        const playedTime = Number(hour*60+min); //재생된 시간
+        const newMelody = replace(melody);
+        let playedMusic=newMelody.repeat(playedTime/newMelody.length);
+        playedMusic+=newMelody.slice(0, playedTime%newMelody.length);
+        
+        if (playedMusic.includes(m)) temp.push([title, playedTime, temp.length+1]);
+    }
+    
+    if (temp.length===0) return '(None)';
+    
+    temp.sort((a,b)=>{
+        if (a[1]!==b[1]) return b[1]-a[1];
+        return a[2]-b[2];
     })
-    let answer='';
-    let longLen=0;
-    arr.forEach((el)=>{
-        if (replace(el[2]).includes(m) && el[1]>longLen) {
-            answer=el[0];
-            longLen=el[1];
-        }
-    })
-    if (answer==='') return '(None)';
-    else return answer;
+
+    return temp[0][0];
 }
