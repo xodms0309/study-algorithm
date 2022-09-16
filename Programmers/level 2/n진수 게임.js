@@ -1,12 +1,12 @@
 function solution(n, t, m, p) {
     var answer = '';    
-    let numArr=[];
-    for (let i=0; i<t*m; i++){
-        numArr.push(i.toString(n));
+    const arr=[];
+    for (let i=0; i<=t*m; i++) {
+        arr.push(i.toString(n));
     }
-    numArr=numArr.join('').split('');
-    for (let i=0; i<t; i++){
-        answer+=numArr[i*m+p-1];
+    const newArr=arr.join('').split('');
+    for (let i=p-1; i<t*m; i+=m) {
+        answer+=newArr[i];
     }
     return answer.toUpperCase();
 }
