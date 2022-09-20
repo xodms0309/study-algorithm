@@ -1,77 +1,60 @@
 function solution(fees, records) {
     var answer = [];
-    //요금 정의
-    const defaultTime=fees[0];
-    const defaultFees=fees[1];
-    const perTime=fees[2];
-    const perFees=fees[3];
     
-    //시간 계산
-    const changeTime=(time)=>{
-        const newTime=time.split(':');
-        const hour=parseInt(newTime[0]);
-        const minute=parseInt(newTime[1]);
-        return [hour, minute];
-    }
-    
-    const calculateTime=(inTime, outTime)=>{
-        let hour=outTime[0]-inTime[0];
-        let minute=outTime[1]-inTime[1];
-        if (outTime[1]<inTime[1]){
-            hour-=1;
-            minute+=60;
-        }
-        return (60*hour+minute);
-    }
-    
-    //요금 계산
-    const calculateFees=(totalTime)=>{
-        if (totalTime>defaultTime) {
-         return(Math.ceil((totalTime-defaultTime)/perTime)*perFees+defaultFees)   
-        }
-        else return defaultFees;
-    }
-    
+    const [defaultTime, defaultFee, unitTime, unitFee]=fees;
     let parkinglot=[];
     
-    records.map((record)=>{
-        const newRecord=record.split(" ");
-        const time=newRecord[0];
-        const carNum=newRecord[1];
-        const comment=newRecord[2];
-        let parkedTime=0;
-        let fees=0;
-        const car=parkinglot.find((car)=>car.carNum===carNum);
 
-        if(comment==="IN"){
-            if (car===undefined){
-               parkinglot.push({
-                carNum:carNum,
-                inTime: time,
-                totalTime:0,
-                }) 
-            }
-            else{
-                car.inTime=time;
-            }
+    const convertTime=(time)=>{
+        const [hour, min]=time.split(":");
+        return [parseInt(hour), parseInt(min)];
+    }
+    
+    const calculateTime=(enter, out)=>{
+        const hour=out[0]-enter[0];
+        const min=out[1]-enter[1];
+        return hour*60+min;
+    }
+    
+    const calculateFees=(totalTime)=>{
+        const fee=Math.ceil((totalTime-defaultTime)/unitTime)*unitFee;
+        if (fee>0) return defaultFee+fee;
+        else return defaultFee;
+    }
+    
+    for (const record of records) {
+        const [time, carNum, isEnter]=record.split(" ");
+
+        const car=parkinglot.find((e)=>e.carNum===carNum);
+        if (isEnter==="IN") {
+            if (car===undefined) parkinglot.push({carNum: carNum, enter: time, totalTime:0 });
+            else car.enter=time;
         }
-        else if (comment==="OUT"){
-            const inTime=changeTime(car.inTime);
-            const outTime=changeTime(time);
-            parkedTime=calculateTime(inTime, outTime);
-            car.inTime='';
-            car.totalTime+=parkedTime;
+        else {
+            const enter=convertTime(car.enter);
+            const out=convertTime(time);
+            const totalTime=calculateTime(enter, out);
+            car.enter='';
+            car.totalTime+=totalTime;
         }
-    })
-    parkinglot.map((car)=>{
-        if (car.inTime!==''){
-            const parkedTime=calculateTime(changeTime(car.inTime), [23,59]);
-            car.inTime='';
-            car.totalTime+=parkedTime;
+    }
+    
+    for (const cars of parkinglot) {
+        //만약 출차내역이 없다면 23:59분에 출차
+        if (cars.enter!=='') {
+            const enter=convertTime(cars.enter);
+            const out=[23, 59];
+            const totalTime=calculateTime(enter, out);
+            cars.totalTime+=totalTime;
         }
-    })
-    parkinglot.sort((a,b)=>{return a.carNum-b.carNum}).map((car)=>{
-        answer.push(calculateFees(car.totalTime))
-    })
+    }
+    
+    parkinglot.sort((a, b)=> a.carNum-b.carNum);
+    
+    for (const cars of parkinglot) {
+        answer.push(calculateFees(cars.totalTime));
+    }
+    
+    
     return answer;
 }
