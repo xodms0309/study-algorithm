@@ -30,19 +30,12 @@ bool moveArduino(int currentX, int currentY, vector<vector<int>> &board) {
 
 			temp[i][j]--;
 
-			for (int d = 0; d < 9; d++) {
-				int nextX = i + dx[d];
-				int nextY = j + dy[d];
-				if (nextX < 0 || nextX >= r || nextY < 0 || nextY >= c) continue;
-
-				int dist = abs(currentX - nextX) + abs(currentY - nextY);
-				if (min_dist > dist) {
-					dir = d;
-					min_dist = dist;
-				}
-			}
-			int arduinoX = i + dx[dir];
-			int arduinoY = j + dy[dir];
+			int dx = 0;
+			int dy = 0;
+			if (currentX!=i)  dx=i > currentX ? -1 : 1;
+			if (currentY!=j) dy = j > currentY ? -1 : 1;
+			int arduinoX = i+ dx;
+			int arduinoY = j +dy;
 
 			if (board[arduinoX][arduinoY]==-1) return false;
 
